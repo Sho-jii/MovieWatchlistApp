@@ -1,19 +1,21 @@
 <template>
-  <ion-segment
-    :model-value="filterStatus"
-    class="movie-filters ion-margin-bottom"
-    @ion-change="updateFilter"
-  >
-    <ion-segment-button value="All">
-      <ion-label>All ({{ total }})</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="Not Watched">
-      <ion-label>Not Watched ({{ pending }})</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="Watched">
-      <ion-label>Watched ({{ watched }})</ion-label>
-    </ion-segment-button>
-  </ion-segment>
+  <div class="filters-wrapper">
+    <ion-segment
+      :model-value="filterStatus"
+      class="movie-filters"
+      @ion-change="updateFilter"
+    >
+      <ion-segment-button value="All">
+        <ion-label>All ({{ total }})</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="Not Watched">
+        <ion-label>Up Next ({{ pending }})</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="Watched">
+        <ion-label>Watched ({{ watched }})</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -42,58 +44,49 @@ const updateFilter = (event: CustomEvent) => {
 </script>
 
 <style scoped>
+.filters-wrapper {
+  margin: 0 4px 22px;
+  padding: 6px;
+  border-radius: 22px;
+  background: var(--neu-bg);
+  box-shadow: var(--neu-inset);
+  border: var(--neu-border);
+}
+
 .movie-filters {
-  --background: #273b4b;
-  margin: 0 4px 20px;
-  padding: 5px;
-  border-radius: 13px;
-  box-shadow: 0 6px 14px rgba(31, 41, 51, 0.1);
+  --background: transparent;
+  background: transparent;
 }
 
 .movie-filters ion-segment-button {
-  --color: #f4f7f6;
-  --color-checked: #ffffff;
-  --indicator-color: #168f82;
-  --indicator-box-shadow: 0 3px 10px rgba(31, 41, 51, 0.1);
+  --color: var(--neu-text-sub);
+  --color-checked: var(--neu-text-main);
+  --indicator-color: var(--neu-bg);
+  --indicator-box-shadow: var(--neu-raised-sm);
   min-height: 42px;
-  border-radius: 9px;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0;
-  line-height: 1.15;
-  white-space: normal;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
   text-transform: none;
+  letter-spacing: 0;
+  transition: all 200ms ease;
 }
 
 .movie-filters ion-segment-button ion-label {
-  display: block;
-  color: #ffffff !important;
-  font-size: inherit;
-  font-weight: 800;
-  line-height: 1.2;
-  opacity: 1 !important;
-  text-align: center;
-  white-space: normal;
+  color: var(--neu-text-sub);
+  font-weight: 700;
+  transition: color 200ms ease;
 }
 
 .movie-filters ion-segment-button.segment-button-checked ion-label {
-  color: #ffffff !important;
-}
-
-.movie-filters ion-segment-button.segment-button-checked {
-  --color-checked: #ffffff;
+  color: var(--neu-text-main) !important;
+  font-weight: 800;
 }
 
 @media (max-width: 520px) {
-  .movie-filters {
-    margin-right: 4px;
-    margin-left: 4px;
-  }
-
   .movie-filters ion-segment-button {
-    min-height: 46px;
-    padding: 0 2px;
-    font-size: 0.7rem;
+    font-size: 0.72rem;
+    min-height: 40px;
   }
 }
 </style>

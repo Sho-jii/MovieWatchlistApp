@@ -1,21 +1,30 @@
 <template>
-  <div class="empty-state">
-    <ion-icon :icon="filmOutline" class="empty-icon" />
-    <h3>No Movies Found</h3>
-    <p v-if="searchQuery">
-      No movies match "{{ searchQuery }}".
-    </p>
-    <p v-else-if="filterStatus !== 'All'">
-      No movies in "{{ filterStatus }}" category.
-    </p>
-    <p v-else>
-      Your watchlist is empty. Add your first movie above!
-    </p>
-  </div>
+  <ion-card class="neu-empty-card">
+    <ion-card-content class="empty-content">
+      <div class="empty-icon-well">
+        <ion-icon :icon="filmOutline" class="empty-icon" />
+      </div>
+      <ion-card-title class="empty-title">No Movies Found</ion-card-title>
+      <p v-if="searchQuery" class="empty-text">
+        No movies match "{{ searchQuery }}".
+      </p>
+      <p v-else-if="filterStatus !== 'All'" class="empty-text">
+        No movies found in "{{ filterStatus }}" filter.
+      </p>
+      <p v-else class="empty-text">
+        Your collection is empty. Add your first movie to get started!
+      </p>
+    </ion-card-content>
+  </ion-card>
 </template>
 
 <script setup lang="ts">
-import { IonIcon } from '@ionic/vue';
+import {
+  IonCard,
+  IonCardContent,
+  IonCardTitle,
+  IonIcon,
+} from '@ionic/vue';
 import { filmOutline } from 'ionicons/icons';
 import type { MovieStatus } from '@/types/movie';
 
@@ -26,35 +35,50 @@ defineProps<{
 </script>
 
 <style scoped>
-.empty-state {
-  margin: 12px 4px;
-  padding: 46px 20px;
-  border: 1px dashed rgba(22, 143, 130, 0.32);
-  border-radius: 16px;
-  background: linear-gradient(145deg, #f1f4f2, #fffefa);
-  color: #7a8589;
+.neu-empty-card {
+  margin: 16px 4px 24px;
+  border-radius: 26px;
+  background: var(--neu-bg);
+  box-shadow: var(--neu-inset);
+  border: var(--neu-border);
   text-align: center;
+  --background: var(--neu-bg);
+  --color: inherit;
+}
+
+.empty-content {
+  padding: 44px 20px 38px;
+}
+
+.empty-icon-well {
+  display: grid;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 16px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--neu-bg);
+  box-shadow: var(--neu-raised-sm);
+  border: var(--neu-border);
 }
 
 .empty-icon {
-  width: 52px;
-  height: 52px;
-  padding: 12px;
-  border-radius: 50%;
-  background: #273b4b;
-  color: #f6c85f;
-  font-size: 28px;
-  margin-bottom: 8px;
+  font-size: 2rem;
+  color: #F36423;
 }
 
-.empty-state h3 {
-  margin: 6px 0;
-  color: #1f2933;
-  font-size: 1.1rem;
+.empty-title {
+  margin: 0 0 6px;
+  color: var(--neu-text-main);
+  font-size: 1.2rem;
+  font-weight: 800;
 }
 
-.empty-state p {
-  margin: 0;
-  font-size: 0.88rem;
+.empty-text {
+  margin: 0 auto;
+  max-width: 280px;
+  color: var(--neu-text-sub);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 </style>

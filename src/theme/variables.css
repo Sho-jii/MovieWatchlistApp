@@ -1,40 +1,65 @@
 :root {
-	--ion-font-family: 'Avenir Next', 'Segoe UI', sans-serif;
-	--ion-background-color: #f6f4ef;
-	--ion-text-color: #1f2933;
-	--ion-color-primary: #e4573d;
-	--ion-color-primary-rgb: 228, 87, 61;
-	--ion-color-primary-contrast: #ffffff;
-	--ion-color-primary-contrast-rgb: 255, 255, 255;
-	--ion-color-primary-shade: #c94d36;
-	--ion-color-primary-tint: #e76851;
-	--ion-color-success: #168f82;
-	--ion-color-success-rgb: 22, 143, 130;
-	--ion-color-success-contrast: #ffffff;
-	--ion-color-success-shade: #137e73;
-	--ion-color-warning: #d38a2f;
-	--ion-color-warning-rgb: 211, 138, 47;
-	--ion-color-warning-contrast: #ffffff;
-	--ion-color-danger: #c64747;
-	--ion-color-danger-rgb: 198, 71, 71;
-	--ion-color-danger-contrast: #ffffff;
-	--ion-color-medium: #6f7b83;
-	--ion-color-light: #eeece6;
-	--ion-color-light-rgb: 238, 236, 230;
-	--ion-card-background: #fffefa;
+  --ion-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --ion-background-color: #EBF0F7;
+  --ion-text-color: #334454;
+  --ion-card-background: #EBF0F7;
+
+  /* Primary Brand Accent (Warm Orange) */
+  --ion-color-primary: #F36423;
+  --ion-color-primary-rgb: 243, 100, 35;
+  --ion-color-primary-contrast: #FFFFFF;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #D7551B;
+  --ion-color-primary-tint: #FF8C42;
+
+  /* Success / Watched Accent (Mint Green) */
+  --ion-color-success: #20B088;
+  --ion-color-success-rgb: 32, 176, 136;
+  --ion-color-success-contrast: #FFFFFF;
+  --ion-color-success-shade: #1B9774;
+  --ion-color-success-tint: #40C29E;
+
+  /* Secondary / Muted Text */
+  --ion-color-medium: #8B9BAA;
+  --ion-color-medium-rgb: 139, 155, 170;
+
+  /* Danger Accent */
+  --ion-color-danger: #E04F5F;
+  --ion-color-danger-rgb: 224, 79, 95;
+  --ion-color-danger-contrast: #FFFFFF;
+
+  /* Soft Skeuomorphic / Neumorphic Tokens */
+  --neu-bg: #EBF0F7;
+  --neu-bg-light: #F0F4F9;
+  --neu-text-main: #334454;
+  --neu-text-sub: #8B9BAA;
+  --neu-orange-grad: linear-gradient(135deg, #FF8C42 0%, #F36423 100%);
+  --neu-orange-glow: 0 6px 18px rgba(243, 100, 35, 0.4);
+  --neu-mint: #20B088;
+  --neu-mint-glow: 0 6px 16px rgba(32, 176, 136, 0.35);
+
+  /* Physics: Top-Left Light Source Shadows */
+  --neu-raised: 8px 8px 18px rgba(166, 180, 200, 0.7), -8px -8px 18px #FFFFFF;
+  --neu-raised-sm: 4px 4px 10px rgba(166, 180, 200, 0.6), -4px -4px 10px #FFFFFF;
+  --neu-raised-pressed: 2px 2px 5px rgba(166, 180, 200, 0.5), -2px -2px 5px #FFFFFF;
+  --neu-inset: inset 4px 4px 8px rgba(166, 180, 200, 0.65), inset -4px -4px 8px rgba(255, 255, 255, 0.95);
+  --neu-inset-sm: inset 2px 2px 5px rgba(166, 180, 200, 0.55), inset -2px -2px 5px rgba(255, 255, 255, 0.9);
+
+  /* Border line */
+  --neu-border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 html,
 body,
 #app {
-	background: var(--ion-background-color);
+  background-color: var(--neu-bg);
+  color: var(--neu-text-main);
+  font-family: var(--ion-font-family);
+  -webkit-font-smoothing: antialiased;
 }
 
-body {
-	letter-spacing: 0;
-}
-
+/* Ensure all ion-cards adopt the soft surface by default */
 ion-card {
-	--background: var(--ion-card-background);
-	--color: var(--ion-text-color);
+  --background: var(--neu-bg);
+  --color: var(--neu-text-main);
 }

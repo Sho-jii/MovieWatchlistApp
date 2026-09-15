@@ -1,38 +1,28 @@
 <template>
-  <ion-card class="form-card" :class="{ 'is-editing': isEditing }">
-    <div class="form-card-accent" aria-hidden="true" />
-    <ion-card-header>
-      <div class="form-heading-row">
-        <div class="form-heading-icon" aria-hidden="true">
+  <ion-card class="neu-form-card" :class="{ 'is-editing': isEditing }">
+    <ion-card-header class="form-header">
+      <div class="form-title-group">
+        <div class="form-icon-squircle">
           <ion-icon :icon="isEditing ? createOutline : addOutline" />
         </div>
-        <div class="form-heading-copy">
-          <p class="form-kicker">{{ isEditing ? 'UPDATE YOUR LIST' : 'ADD TO YOUR LIST' }}</p>
-          <ion-card-title>
-            {{ isEditing ? 'Edit Movie Details' : 'Add New Movie' }}
+        <div>
+          <ion-card-subtitle class="form-kicker">
+            {{ isEditing ? 'UPDATE MOVIE' : 'ADD NEW ENTRY' }}
+          </ion-card-subtitle>
+          <ion-card-title class="form-title">
+            {{ isEditing ? 'Edit Movie Details' : 'Add to Watchlist' }}
           </ion-card-title>
         </div>
       </div>
-      <p class="form-description">
-        {{ isEditing ? 'Refresh the details and keep your watchlist current.' : 'Save a title now so movie night never starts with a blank screen.' }}
-      </p>
-      <div class="form-mode-chip">
-        <span class="mode-dot" />
-        {{ isEditing ? 'Editing saved movie' : 'New watchlist entry' }}
-      </div>
+      <ion-badge class="mode-badge" :class="isEditing ? 'badge-editing' : 'badge-new'">
+        {{ isEditing ? 'Editing' : 'New' }}
+      </ion-badge>
     </ion-card-header>
 
-    <ion-card-content>
+    <ion-card-content class="form-content">
       <form @submit.prevent="submitForm">
-        <div class="form-section-label">
-          <span>01</span>
-          <div>
-            <strong>Movie details</strong>
-            <small>Tell us what you are saving</small>
-          </div>
-        </div>
-
-        <ion-item class="identity-item ion-margin-bottom" lines="inset">
+        <!-- Section 1: Title -->
+        <div class="input-groove ion-margin-bottom">
           <ion-input
             v-model="form.title"
             label="Movie Title *"
@@ -40,11 +30,12 @@
             placeholder="e.g. Inception"
             required
           />
-        </ion-item>
+        </div>
 
+        <!-- Section 2: Genre & Year -->
         <ion-row>
           <ion-col size="12" size-sm="6">
-            <ion-item class="identity-item ion-margin-bottom" lines="inset">
+            <div class="input-groove ion-margin-bottom">
               <ion-input
                 v-model="form.genre"
                 label="Genre *"
@@ -52,11 +43,11 @@
                 placeholder="e.g. Sci-Fi, Action"
                 required
               />
-            </ion-item>
+            </div>
           </ion-col>
 
           <ion-col size="12" size-sm="6">
-            <ion-item class="identity-item ion-margin-bottom" lines="inset">
+            <div class="input-groove ion-margin-bottom">
               <ion-input
                 v-model.number="form.year"
                 type="number"
@@ -67,37 +58,30 @@
                 max="2099"
                 required
               />
-            </ion-item>
+            </div>
           </ion-col>
         </ion-row>
 
-        <div class="form-section-label form-section-label-secondary">
-          <span>02</span>
-          <div>
-            <strong>How you feel about it</strong>
-            <small>Set a rating and watch status</small>
-          </div>
-        </div>
-
+        <!-- Section 3: Rating & Status -->
         <ion-row>
           <ion-col size="12" size-sm="6">
-            <ion-item class="preference-item ion-margin-bottom" lines="inset">
+            <div class="input-groove ion-margin-bottom">
               <ion-select
                 v-model.number="form.rating"
                 label="Rating (1 - 5 Stars)"
                 label-placement="floating"
               >
-                <ion-select-option :value="1">⭐ 1 Star (Poor)</ion-select-option>
-                <ion-select-option :value="2">⭐⭐ 2 Stars (Fair)</ion-select-option>
-                <ion-select-option :value="3">⭐⭐⭐ 3 Stars (Good)</ion-select-option>
-                <ion-select-option :value="4">⭐⭐⭐⭐ 4 Stars (Great)</ion-select-option>
-                <ion-select-option :value="5">⭐⭐⭐⭐⭐ 5 Stars (Masterpiece)</ion-select-option>
+                <ion-select-option :value="1">⭐ 1 Star</ion-select-option>
+                <ion-select-option :value="2">⭐⭐ 2 Stars</ion-select-option>
+                <ion-select-option :value="3">⭐⭐⭐ 3 Stars</ion-select-option>
+                <ion-select-option :value="4">⭐⭐⭐⭐ 4 Stars</ion-select-option>
+                <ion-select-option :value="5">⭐⭐⭐⭐⭐ 5 Stars</ion-select-option>
               </ion-select>
-            </ion-item>
+            </div>
           </ion-col>
 
           <ion-col size="12" size-sm="6">
-            <ion-item class="preference-item ion-margin-bottom" lines="inset">
+            <div class="input-groove ion-margin-bottom">
               <ion-select
                 v-model="form.status"
                 label="Watch Status"
@@ -106,31 +90,31 @@
                 <ion-select-option value="Not Watched">Not Watched</ion-select-option>
                 <ion-select-option value="Watched">Watched</ion-select-option>
               </ion-select>
-            </ion-item>
+            </div>
           </ion-col>
         </ion-row>
 
+        <!-- Form Actions -->
         <div class="form-actions">
           <ion-button
             type="submit"
-            class="submit-button"
-            expand="block"
-            :color="isEditing ? 'success' : 'primary'"
+            class="neu-primary-btn"
+            :class="{ 'btn-editing': isEditing }"
+            fill="clear"
           >
             <ion-icon slot="start" :icon="isEditing ? checkmarkOutline : addOutline" />
-            {{ isEditing ? 'Save Changes' : 'Add to Watchlist' }}
+            <span>{{ isEditing ? 'Save Changes' : 'Add to Watchlist' }}</span>
           </ion-button>
 
           <ion-button
             v-if="isEditing"
-            expand="block"
-            fill="outline"
-            color="medium"
-            class="cancel-button ion-margin-top"
+            type="button"
+            class="neu-cancel-btn"
+            fill="clear"
             @click="$emit('cancel')"
           >
             <ion-icon slot="start" :icon="closeOutline" />
-            Cancel Edit
+            <span>Cancel</span>
           </ion-button>
         </div>
       </form>
@@ -141,15 +125,16 @@
 <script setup lang="ts">
 import { reactive, watch } from 'vue';
 import {
-  IonButton,
   IonCard,
-  IonCardContent,
   IonCardHeader,
   IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonBadge,
+  IonButton,
   IonCol,
   IonIcon,
   IonInput,
-  IonItem,
   IonRow,
   IonSelect,
   IonSelectOption,
@@ -179,275 +164,209 @@ const submitForm = () => emit('submit', { ...form });
 </script>
 
 <style scoped>
-.form-card {
-  position: relative;
-  margin: 0 4px 16px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 18px;
-  background: #1f2933;
-  box-shadow: 0 14px 32px rgba(31, 41, 51, 0.18);
+.neu-form-card {
+  margin: 0 4px 26px;
+  border-radius: 28px;
+  background: var(--neu-bg);
+  box-shadow: var(--neu-raised);
+  border: var(--neu-border);
+  transition: all 220ms ease;
+  --background: var(--neu-bg);
+  --color: inherit;
+  overflow: visible;
 }
 
-.form-card-accent {
-  height: 7px;
-  background: linear-gradient(90deg, #273b4b, #e4573d 52%, #f6c85f);
+.neu-form-card::part(native) {
+  border-radius: 28px;
 }
 
-.form-card.is-editing .form-card-accent {
-  background: linear-gradient(90deg, #115d67, #168f82 52%, #8de0d3);
+.form-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 20px 10px;
 }
 
-.form-card ion-card-header {
-  padding: 22px 24px 16px;
-  background: #273b4b;
+.form-content {
+  padding: 0 20px 22px;
 }
 
-.form-card ion-card-content {
-  padding: 10px 24px 24px;
-  background: #1f2933;
-}
-
-.form-card.is-editing ion-card-header,
-.form-card.is-editing ion-card-content {
-  background: #115d67;
-}
-
-.form-kicker {
-  margin: 0 0 5px;
-  color: #f6c85f;
-  font-size: 0.66rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-}
-
-.form-card ion-card-title {
-  color: #fffefa;
-  font-size: 1.35rem;
-  font-weight: 800;
-}
-
-.form-heading-row {
+.form-title-group {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.form-heading-icon {
+.form-icon-squircle {
   display: grid;
-  flex: 0 0 42px;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   place-items: center;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.12);
-  color: #f6c85f;
-  font-size: 1.2rem;
+  border-radius: 14px;
+  background: var(--neu-bg);
+  box-shadow: var(--neu-raised-sm);
+  border: var(--neu-border);
+  color: #F36423;
+  font-size: 1.25rem;
 }
 
-.form-heading-copy {
-  min-width: 0;
+.is-editing .form-icon-squircle {
+  color: var(--neu-mint);
 }
 
-.form-description {
-  max-width: 510px;
-  margin: 14px 0 0 54px;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.86rem;
-  line-height: 1.5;
-}
-
-.form-mode-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin: 15px 0 0 54px;
-  padding: 6px 9px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.76);
-  font-size: 0.66rem;
-  font-weight: 700;
-}
-
-.mode-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #e4573d;
-  box-shadow: 0 0 0 3px rgba(228, 87, 61, 0.12);
-}
-
-.is-editing .mode-dot {
-  background: #8de0d3;
-  box-shadow: 0 0 0 3px rgba(141, 224, 211, 0.12);
-}
-
-.form-card ion-item {
-  --background: rgba(255, 255, 255, 0.1);
-  --border-color: rgba(255, 255, 255, 0.12);
-  --color: #fffefa;
-  --highlight-color: #f6c85f;
-  --placeholder-color: rgba(255, 255, 255, 0.5);
-  --placeholder-opacity: 1;
-  --padding-start: 16px;
-  --inner-padding-end: 16px;
-  border: 1px solid transparent;
-  border-left: 4px solid #e4573d;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
-}
-
-.form-card.is-editing ion-item,
-.form-card .preference-item {
-  border-left-color: #168f82;
-}
-
-.form-card ion-item:focus-within,
-.form-card .identity-item:focus-within {
-  border-color: #f6c85f;
-  box-shadow: 0 0 0 3px rgba(246, 200, 95, 0.12);
-}
-
-.form-card .preference-item:focus-within {
-  border-color: #8de0d3;
-  box-shadow: 0 0 0 3px rgba(141, 224, 211, 0.12);
-}
-
-.form-section-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 4px 0 12px;
-}
-
-.form-section-label > span {
-  display: grid;
-  width: 25px;
-  height: 25px;
-  place-items: center;
-  border-radius: 8px;
-  background: rgba(246, 200, 95, 0.18);
-  color: #f6c85f;
-  font-size: 0.67rem;
-  font-weight: 900;
-}
-
-.form-section-label strong,
-.form-section-label small {
+.form-kicker {
   display: block;
-}
-
-.form-section-label strong {
-  color: #fffefa;
-  font-size: 0.8rem;
+  font-size: 0.65rem;
   font-weight: 800;
+  color: var(--neu-text-sub);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 2px;
 }
 
-.form-section-label small {
-  margin-top: 2px;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.68rem;
+.form-title {
+  margin: 0;
+  color: var(--neu-text-main);
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
 }
 
-.form-section-label-secondary {
-  margin-top: 6px;
+.mode-badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: var(--neu-inset-sm);
+  background: var(--neu-bg);
 }
 
-.form-section-label-secondary > span {
-  background: rgba(141, 224, 211, 0.18);
-  color: #8de0d3;
+.badge-new {
+  color: #F36423;
+  border: 1px solid rgba(243, 100, 35, 0.25);
 }
 
-.form-card ion-row {
-  margin: 0 -6px;
+.badge-editing {
+  color: var(--neu-mint);
+  border: 1px solid rgba(32, 176, 136, 0.25);
 }
 
-.form-card ion-col {
-  padding: 0 6px;
+/* Sunken Inset Input Grooves */
+.input-groove {
+  border-radius: 18px;
+  background: var(--neu-bg);
+  box-shadow: var(--neu-inset);
+  border: var(--neu-border);
+  padding: 2px 14px;
+  transition: all 180ms ease;
 }
 
+.input-groove:focus-within {
+  box-shadow: inset 4px 4px 8px rgba(166, 180, 200, 0.7), inset -4px -4px 8px #FFFFFF, 0 0 0 2px rgba(243, 100, 35, 0.35);
+}
+
+.is-editing .input-groove:focus-within {
+  box-shadow: inset 4px 4px 8px rgba(166, 180, 200, 0.7), inset -4px -4px 8px #FFFFFF, 0 0 0 2px rgba(32, 176, 136, 0.35);
+}
+
+ion-input,
+ion-select {
+  --color: var(--neu-text-main);
+  --placeholder-color: #8B9BAA;
+  --placeholder-opacity: 0.8;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+ion-input::part(label),
+ion-select::part(label) {
+  color: var(--neu-text-sub);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* Actions */
 .form-actions {
-  display: grid;
-  gap: 8px;
-  margin-top: 18px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
 }
 
-.form-actions ion-button {
-  --border-radius: 10px;
-  min-height: 48px;
+.neu-primary-btn {
+  --background: var(--neu-orange-grad);
+  --color: #ffffff;
+  --box-shadow: var(--neu-orange-glow);
+  --border-radius: 999px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --padding-start: 24px;
+  --padding-end: 24px;
+  height: 48px;
+  margin: 0;
+  font-size: 0.92rem;
   font-weight: 800;
-  letter-spacing: 0;
+  text-transform: none;
+  transition: all 180ms ease;
+  flex: 1;
 }
 
-.form-actions .submit-button {
-  --background: #e4573d;
-  --background-activated: #c94d36;
-  --background-hover: #e76851;
-  --box-shadow: 0 9px 18px rgba(228, 87, 61, 0.22);
-  --color: #fffefa;
+.neu-primary-btn:hover {
+  transform: translateY(-1px);
 }
 
-.form-card.is-editing .form-actions .submit-button {
-  --background: #168f82;
-  --background-activated: #115d67;
-  --background-hover: #2aa698;
-  --box-shadow: 0 9px 18px rgba(22, 143, 130, 0.22);
+.btn-editing {
+  --background: linear-gradient(135deg, #20B088 0%, #167f78 100%);
+  --box-shadow: var(--neu-mint-glow);
 }
 
-.form-actions .cancel-button {
-  --border-color: rgba(255, 255, 255, 0.5);
-  --border-width: 1px;
-  --color: #fffefa;
-  --color-activated: #f6c85f;
+.neu-cancel-btn {
+  --background: var(--neu-bg);
+  --color: var(--neu-text-sub);
+  --box-shadow: var(--neu-raised-sm);
+  --border-radius: 999px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  height: 48px;
+  margin: 0;
+  border: var(--neu-border);
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: none;
+  transition: all 180ms ease;
 }
 
-@media (max-width: 600px) {
-  .form-card ion-card-header {
-    padding: 20px 18px 12px;
-  }
-
-  .form-card ion-card-content {
-    padding: 8px 18px 18px;
-  }
-
-  .form-heading-icon {
-    flex-basis: 38px;
-    width: 38px;
-    height: 38px;
-  }
-
-  .form-description,
-  .form-mode-chip {
-    margin-left: 50px;
-  }
-
-  .form-description {
-    font-size: 0.8rem;
-  }
-
-  .form-section-label {
-    margin-top: 2px;
-  }
-
-  .form-card ion-row {
-    margin: 0;
-  }
-
-  .form-card ion-col {
-    padding: 0;
-  }
+.neu-cancel-btn:hover {
+  --color: #334454;
+  transform: translateY(-1px);
 }
 
-@media (min-width: 601px) {
-  .form-card ion-col[size-sm='6'] {
-    flex: 0 0 50%;
-    width: 50%;
-    max-width: 50%;
+.neu-cancel-btn:active {
+  box-shadow: var(--neu-inset-sm);
+  transform: translateY(1px);
+}
+
+@media (max-width: 480px) {
+  .neu-form-card {
+    border-radius: 24px;
+  }
+
+  .form-header {
+    padding: 20px 16px 8px;
+  }
+
+  .form-content {
+    padding: 0 16px 18px;
+  }
+
+  .form-title {
+    font-size: 1.15rem;
   }
 }
 </style>
