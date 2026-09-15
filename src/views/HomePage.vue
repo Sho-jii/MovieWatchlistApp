@@ -22,7 +22,12 @@
               Capture what you want to watch, mark the ones you loved, and make
               your next movie night effortless.
             </p>
-            <ion-button class="surprise-button" fill="solid" @click="openSurprisePicker">
+            <ion-button
+              class="surprise-button"
+              fill="solid"
+              :disabled="movies.length === 0"
+              @click="openSurprisePicker"
+            >
               <ion-icon slot="start" :icon="shuffleOutline" />
               Surprise me
             </ion-button>
@@ -148,6 +153,16 @@
           </div>
         </ion-content>
       </ion-modal>
+
+      <!-- User Feedback Toast Notification -->
+      <ion-toast
+        :is-open="isToastOpen"
+        :message="toastMessage"
+        :color="toastColor"
+        :duration="2200"
+        position="bottom"
+        @didDismiss="isToastOpen = false"
+      />
     </ion-content>
   </ion-page>
 </template>
@@ -164,6 +179,7 @@ import {
   IonButton,
   IonIcon,
   IonModal,
+  IonToast,
 } from '@ionic/vue';
 import { closeOutline, shuffleOutline } from 'ionicons/icons';
 import MovieStats from '@/components/MovieStats.vue';
@@ -185,11 +201,7 @@ import {
   remove,
 } from 'firebase/database';
 
-/*
-|--------------------------------------------------------------------------
-| Reactive Component State
-|--------------------------------------------------------------------------
-*/
+// Component state
 const movies = ref<Movie[]>([]);
 const loading = ref(true);
 const searchQuery = ref('');
@@ -215,11 +227,18 @@ const editingId = ref<string | null>(null);
 const isAlertOpen = ref(false);
 const movieToDelete = ref<Movie | null>(null);
 
-/*
-|--------------------------------------------------------------------------
-| Computed Properties
-|--------------------------------------------------------------------------
-*/
+// Toast feedback state
+const isToastOpen = ref(false);
+const toastMessage = ref('');
+const toastColor = ref<'success' | 'danger' | 'warning'>('success');
+
+const showToast = (message: string, color: 'success' | 'danger' | 'warning' = 'success') => {
+  toastMessage.value = message;
+  toastColor.value = color;
+  isToastOpen.value = true;
+};
+
+// Computed properties for counters and search filtering
 const watchedCount = computed(() =>
   movies.value.filter((m) => m.status === 'Watched').length
 );
@@ -272,14 +291,7 @@ const focusSurpriseMovie = () => {
   });
 };
 
-/*
-|--------------------------------------------------------------------------
-| 1. READ: Listen to Firebase Realtime Database
-|--------------------------------------------------------------------------
-| onValue listens for real-time updates from Firebase.
-| Whenever a movie is added, modified, or removed, Firebase notifies
-| this callback automatically and updates movies.value.
-*/
+// READ: Listen for real-time updates from Firebase Realtime Database
 onMounted(() => {
   const moviesNodeRef = dbRef(db, 'movies');
 
@@ -312,36 +324,44 @@ onMounted(() => {
     (error) => {
       console.error('Firebase read error:', error);
       loading.value = false;
+      showToast('Firebase read error: Please check database rules or connection.', 'danger');
     }
   );
 });
 
-/*
-|--------------------------------------------------------------------------
-| 2. CREATE & UPDATE (Save Form)
-|--------------------------------------------------------------------------
-| If isEditing is true, we call Firebase update() with the editingId.
-| If isEditing is false, we push() a new key and set() the movie.
-*/
+// CREATE & UPDATE: Save new movie or update existing entry
 const saveMovie = async (form: MovieFormData) => {
-  if (!form.title.trim() || !form.genre.trim()) {
+  const cleanTitle = form.title.trim();
+  const cleanGenre = form.genre.trim();
+  const cleanYear = Number(form.year) || new Date().getFullYear();
+  const cleanRating = Number(form.rating) || 5;
+
+  if (!cleanTitle || !cleanGenre) {
+    showToast('Please provide both movie title and genre.', 'warning');
     return;
   }
 
-  movieForm.value = form;
+  movieForm.value = {
+    title: cleanTitle,
+    genre: cleanGenre,
+    year: cleanYear,
+    rating: cleanRating,
+    status: form.status,
+  };
 
   try {
     if (isEditing.value && editingId.value) {
       // UPDATE existing movie in Firebase
       const targetRef = dbRef(db, `movies/${editingId.value}`);
       await update(targetRef, {
-        title: movieForm.value.title.trim(),
-        genre: movieForm.value.genre.trim(),
-        year: Number(movieForm.value.year),
-        rating: Number(movieForm.value.rating),
-        status: movieForm.value.status,
+        title: cleanTitle,
+        genre: cleanGenre,
+        year: cleanYear,
+        rating: cleanRating,
+        status: form.status,
       });
 
+      showToast(`Updated "${cleanTitle}"`, 'success');
       cancelEdit();
     } else {
       // CREATE new movie in Firebase
@@ -349,26 +369,24 @@ const saveMovie = async (form: MovieFormData) => {
       const newMovieRef = push(moviesNodeRef);
 
       await set(newMovieRef, {
-        title: movieForm.value.title.trim(),
-        genre: movieForm.value.genre.trim(),
-        year: Number(movieForm.value.year),
-        rating: Number(movieForm.value.rating),
-        status: movieForm.value.status,
+        title: cleanTitle,
+        genre: cleanGenre,
+        year: cleanYear,
+        rating: cleanRating,
+        status: form.status,
         createdAt: Date.now(),
       });
 
+      showToast(`Added "${cleanTitle}" to watchlist`, 'success');
       resetForm();
     }
   } catch (err) {
     console.error('Error saving movie:', err);
+    showToast('Failed to save to Firebase. Check database rules.', 'danger');
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| Form Helper Functions
-|--------------------------------------------------------------------------
-*/
+// Form helper functions
 const resetForm = () => {
   movieForm.value = {
     title: '',
@@ -403,12 +421,7 @@ const cancelEdit = () => {
   resetForm();
 };
 
-/*
-|--------------------------------------------------------------------------
-| 3. UPDATE: Quick Status Toggle
-|--------------------------------------------------------------------------
-| Toggles a movie between "Watched" and "Not Watched" with one click.
-*/
+// UPDATE: Quick toggle between Watched and Not Watched
 const toggleStatus = async (movie: Movie) => {
   if (!movie.id) return;
   const newStatus = movie.status === 'Watched' ? 'Not Watched' : 'Watched';
@@ -416,17 +429,14 @@ const toggleStatus = async (movie: Movie) => {
   try {
     const targetRef = dbRef(db, `movies/${movie.id}`);
     await update(targetRef, { status: newStatus });
+    showToast(`Marked "${movie.title}" as ${newStatus}`, 'success');
   } catch (err) {
     console.error('Error updating status:', err);
+    showToast('Failed to update status in Firebase.', 'danger');
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| 4. DELETE: Remove Movie from Firebase
-|--------------------------------------------------------------------------
-| Prompts user for confirmation, then calls Firebase remove().
-*/
+// DELETE: Remove movie from Firebase after user confirmation
 const confirmDelete = (movie: Movie) => {
   movieToDelete.value = movie;
   isAlertOpen.value = true;
@@ -442,15 +452,18 @@ const alertButtons = [
     role: 'destructive',
     handler: async () => {
       if (movieToDelete.value?.id) {
+        const deletedTitle = movieToDelete.value.title;
         try {
           const targetRef = dbRef(db, `movies/${movieToDelete.value.id}`);
           await remove(targetRef);
+          showToast(`Removed "${deletedTitle}" from watchlist`, 'warning');
           // If we were currently editing this movie, cancel edit
           if (editingId.value === movieToDelete.value.id) {
             cancelEdit();
           }
         } catch (err) {
           console.error('Error deleting movie:', err);
+          showToast('Failed to delete movie from Firebase.', 'danger');
         }
       }
       movieToDelete.value = null;
