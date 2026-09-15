@@ -1,2 +1,40 @@
-/* For information on how to create your own theme, please refer to:
-http://ionicframework.com/docs/theming/ */
+:root {
+	--ion-font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+	--ion-background-color: #f6f4ef;
+	--ion-text-color: #1f2933;
+	--ion-color-primary: #e4573d;
+	--ion-color-primary-rgb: 228, 87, 61;
+	--ion-color-primary-contrast: #ffffff;
+	--ion-color-primary-contrast-rgb: 255, 255, 255;
+	--ion-color-primary-shade: #c94d36;
+	--ion-color-primary-tint: #e76851;
+	--ion-color-success: #168f82;
+	--ion-color-success-rgb: 22, 143, 130;
+	--ion-color-success-contrast: #ffffff;
+	--ion-color-success-shade: #137e73;
+	--ion-color-warning: #d38a2f;
+	--ion-color-warning-rgb: 211, 138, 47;
+	--ion-color-warning-contrast: #ffffff;
+	--ion-color-danger: #c64747;
+	--ion-color-danger-rgb: 198, 71, 71;
+	--ion-color-danger-contrast: #ffffff;
+	--ion-color-medium: #6f7b83;
+	--ion-color-light: #eeece6;
+	--ion-color-light-rgb: 238, 236, 230;
+	--ion-card-background: #fffefa;
+}
+
+html,
+body,
+#app {
+	background: var(--ion-background-color);
+}
+
+body {
+	letter-spacing: 0;
+}
+
+ion-card {
+	--background: var(--ion-card-background);
+	--color: var(--ion-text-color);
+}
